@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04060f">
+<title>Tizim — Kunlik Kvestlar</title>
+<style>
+:root{color-scheme:dark;--bg:#04060f;--panel:rgba(10,22,52,.85);--line:#2f8bff;--glow:#38b6ff;--txt:#d8ecff;--dim:#7c9cc4;--red:#ff4a5e;--gold:#ffd166;--vio:#a06bff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#0d2a66 0,var(--bg) 60%) fixed;color:var(--txt);font-family:"Segoe UI",Roboto,Arial,sans-serif;letter-spacing:.3px;padding:env(safe-area-inset-top,0px) 0 calc(70px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:560px;margin:0 auto;padding:14px}
+.win{background:var(--panel);border:1px solid var(--line);box-shadow:0 0 18px rgba(47,139,255,.45),inset 0 0 22px rgba(47,139,255,.15);padding:16px;margin-bottom:16px;position:relative}
+.win::before,.win::after{content:"";position:absolute;width:12px;height:12px;border:2px solid var(--glow)}
+.win::before{top:-3px;left:-3px;border-right:0;border-bottom:0}
+.win::after{bottom:-3px;right:-3px;border-left:0;border-top:0}
+.title{text-align:center;font-weight:700;letter-spacing:3px;text-transform:uppercase;text-shadow:0 0 10px var(--glow);margin:0 0 4px}
+.sub{text-align:center;color:var(--dim);font-size:13px;margin-bottom:10px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.lvl{font-size:42px;font-weight:800;text-shadow:0 0 14px var(--glow);line-height:1}
+.rank{border:1px solid var(--gold);color:var(--gold);padding:4px 10px;font-weight:700;text-shadow:0 0 8px var(--gold)}
+.ttl{color:var(--vio);font-size:13px;margin-top:2px}
+.bar{height:10px;background:#0a1633;border:1px solid #1d4a99;margin:6px 0;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#1c6dff,var(--glow));box-shadow:0 0 10px var(--glow);transition:width .4s}
+.small{font-size:12px;color:var(--dim);display:flex;justify-content:space-between}
+.timer{text-align:center;font-size:28px;font-weight:700;color:var(--red);text-shadow:0 0 10px var(--red);margin:4px 0 10px;font-variant-numeric:tabular-nums}
+.q{border-top:1px solid #1d4a99;padding:12px 0}
+.q.done{opacity:.55}
+.qh{display:flex;justify-content:space-between;gap:8px;font-weight:600}
+.btns{display:flex;gap:8px;margin-top:8px}
+button{background:transparent;border:1px solid var(--line);color:var(--txt);padding:9px 12px;cursor:pointer;font:inherit;font-size:13px;text-transform:uppercase;letter-spacing:1px}
+button:active{background:rgba(47,139,255,.35)}
+button.x{border-color:var(--red);color:var(--red);margin-left:auto}
+.add{display:grid;grid-template-columns:1fr 90px;gap:8px;margin-top:8px}
+input,select{background:#050d22;border:1px solid #1d4a99;color:var(--txt);padding:10px;font:inherit;min-width:0}
+.add select,.add button{grid-column:1/-1}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips button{font-size:11px;padding:6px 8px;text-transform:none}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #1d4a99}
+.row b{font-size:20px;margin:0 10px}
+.lock{opacity:.4}
+.hist{display:flex;gap:6px;justify-content:space-between;margin-top:8px}
+.hist div{flex:1;text-align:center;font-size:11px;color:var(--dim)}
+.hist span{display:block;height:34px;margin-bottom:4px;border:1px solid #1d4a99;background:linear-gradient(to top,var(--glow) var(--p),transparent var(--p))}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#050d22;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;border:0;padding:14px 4px;color:var(--dim)}
+nav button.on{color:var(--glow);text-shadow:0 0 8px var(--glow);box-shadow:inset 0 2px 0 var(--glow)}
+.tab{display:none}.tab.on{display:block}
+.pop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.75);z-index:9;padding:20px}
+.pop.on{display:flex}
+.pop .win{max-width:360px;text-align:center;animation:p .4s;margin:0}
+@keyframes p{from{transform:scale(.8);opacity:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="tab on" id="t0">
+  <div class="win">
+    <div class="head"><div><div class="small">DARAJA</div><div class="lvl" id="lvl">1</div><div class="ttl" id="ttl"></div></div><div class="rank" id="rank">E-RANG</div></div>
+    <div class="bar"><i id="xpb"></i></div>
+    <div class="small"><span id="xpt"></span><span id="strk"></span></div>
+  </div>
+  <div class="win">
+    <h2 class="title">[ Tizim ]</h2>
+    <div class="sub">Kunlik kvest: O‘yinchi bo‘lishga tayyorgarlik</div>
+    <div class="timer" id="tm">00:00:00</div>
+    <div id="qs"></div>
+    <div class="sub" style="margin:12px 0 0;color:var(--red)">Ogohlantirish: bajarilmagan kvest uchun jarima — XP yo‘qotiladi.</div>
+  </div>
+  <div class="win">
+    <h2 class="title" style="font-size:14px">Yangi kvest</h2>
+    <div class="add">
+      <input id="nn" placeholder="Nomi">
+      <input id="nm" type="number" min="1" placeholder="Soni">
+      <select id="ns"></select>
+      <button onclick="addQ()">+ Qo‘shish</button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</div>
+
+<div class="tab" id="t1">
+  <div class="win">
+    <h2 class="title">[ Holat ]</h2>
+    <div class="sub">Erkin ochko: <b id="pts" style="color:var(--gold)">0</b> (har daraja +3)</div>
+    <div id="stl"></div>
+  </div>
+  <div class="win">
+    <h2 class="title" style="font-size:14px">Oxirgi 7 kun</h2>
+    <div class="hist" id="hist"></div>
+  </div>
+  <div class="win">
+    <div class="row" style="border:0"><span>Ovoz va tebranish</span><button id="snd" onclick="togSnd()"></button></div>
+    <div class="row"><span>Hammasini o‘chirish</span><button class="x" style="margin:0" onclick="resetAll()">Reset</button></div>
+  </div>
+</div>
+
+<div class="tab" id="t2">
+  <div class="win">
+    <h2 class="title">[ Soyalar armiyasi ]</h2>
+    <div class="sub">Daraja oshgani sari soyalar uyg‘onadi.</div>
+    <div id="sh"></div>
+  </div>
+</div>
+</div>
+
+<nav>
+  <button class="on" onclick="tab(0,this)">Kvest</button>
+  <button onclick="tab(1,this)">Holat</button>
+  <button onclick="tab(2,this)">Soyalar</button>
+</nav>
+<div class="pop" id="pop"><div class="win"><h2 class="title" id="pt"></h2><div class="sub" id="pd"></div><button onclick="pop.classList.remove('on')">Tasdiqlash</button></div></div>
+
+<script>
+var KEY="sl-quest-v2",pop=document.getElementById("pop");
+var NM={str:"KUCH",agi:"CHAQQONLIK",vit:"CHIDAMLILIK",int:"AQL",sen:"SEZGI"};
+var SH=[["Igris",5,"Qizil ritsar"],["Tusk",10,"Orc shamani"],["Iron",15,"Temir soya"],["Beru",20,"Chumoli qiroli"],["Bellion",30,"Soyalar marshali"],["Monarx",45,"Soyalar hukmdori"]];
+var CH=[["Kitob o‘qish (bet)",20,"int"],["Dasturlash (daqiqa)",60,"int"],["Montaj (daqiqa)",120,"agi"],["Suv (stakan)",8,"vit"],["Meditatsiya (daqiqa)",10,"sen"]];
+function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function def(){return{xp:0,lvl:1,pts:0,streak:0,snd:1,date:today(),hist:{},stats:{str:10,agi:10,vit:10,int:10,sen:10},qs:[
+{id:1,n:"Otjimaniya",cur:0,max:100,s:"str"},{id:2,n:"Press (qorin)",cur:0,max:100,s:"vit"},
+{id:3,n:"O‘tirib-turish",cur:0,max:100,s:"agi"},{id:4,n:"Yugurish (km)",cur:0,max:10,s:"vit"}]}}
+var S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.qs)S=def();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function need(){return S.lvl*100}
+function rank(){var l=S.lvl;return l<5?"E":l<10?"D":l<20?"C":l<30?"B":l<45?"A":"S"}
+function title(){var l=S.lvl;return l<5?"Eng zaif ovchi":l<10?"Yangi ovchi":l<20?"Tajribali ovchi":l<30?"Elita ovchi":l<45?"Milliy darajadagi ovchi":"Soyalar hukmdori"}
+var AC;
+function beep(f,d){if(!S.snd)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type="sine";g.gain.value=.12;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}if(navigator.vibrate)try{navigator.vibrate(60)}catch(e){}}
+function msg(t,d){document.getElementById("pt").textContent=t;document.getElementById("pd").textContent=d;pop.classList.add("on")}
+function gain(x){S.xp+=x;while(S.xp>=need()){S.xp-=need();S.lvl++;S.pts+=3;beep(880,.4);var sh=SH.filter(function(s){return s[1]===S.lvl})[0];msg("[ DARAJA OSHDI ]",S.lvl+"-daraja! +3 ochko."+(sh?" Yangi soya: "+sh[0]+"!":""))}}
+function mark(){var d=S.qs.filter(function(q){return q.cur>=q.max}).length;S.hist[S.date]=[d,S.qs.length]}
+function rollover(){
+  if(S.date===today())return;
+  mark();
+  var miss=S.qs.filter(function(q){return q.cur<q.max}).length;
+  if(miss){S.xp=Math.max(0,S.xp-miss*30);S.streak=0;msg("[ JARIMA ]",miss+" ta kvest bajarilmadi. -"+miss*30+" XP.")}
+  S.qs.forEach(function(q){q.cur=0});
+  S.date=today();save();
+}
+function bump(id,by){
+  var q=S.qs.find(function(x){return x.id===id});if(!q)return;
+  var was=q.cur>=q.max;q.cur=Math.min(q.max,q.cur+by);beep(520,.08);
+  if(!was&&q.cur>=q.max){
+    gain(50);S.stats[q.s]++;beep(700,.25);
+    if(S.qs.every(function(x){return x.cur>=x.max})){S.streak++;gain(100);msg("[ KVEST BAJARILDI ]","Barcha kunlik kvestlar tugadi! +100 bonus XP")}
+  }
+  mark();save();render();
+}
+function del(id){S.qs=S.qs.filter(function(q){return q.id!==id});mark();save();render()}
+function addRaw(n,m,s){S.qs.push({id:Date.now()+Math.random(),n:n,cur:0,max:m,s:s});mark();save();render()}
+function addQ(){var n=document.getElementById("nn").value.trim(),m=parseInt(document.getElementById("nm").value,10);if(!n||!m||m<1)return;addRaw(n,m,document.getElementById("ns").value);document.getElementById("nn").value="";document.getElementById("nm").value=""}
+function spend(k){if(S.pts<1)return;S.pts--;S.stats[k]++;beep(600,.08);save();render()}
+function togSnd(){S.snd=S.snd?0:1;save();render()}
+function resetAll(){if(confirm("Barcha progress o‘chiriladi. Davom etasizmi?")){S=def();save();render()}}
+function tab(i,b){for(var k=0;k<3;k++)document.getElementById("t"+k).classList.toggle("on",k===i);var bs=document.querySelectorAll("nav button");for(var j=0;j<bs.length;j++)bs[j].classList.toggle("on",j===i);window.scrollTo(0,0)}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function render(){
+  document.getElementById("lvl").textContent=S.lvl;
+  document.getElementById("ttl").textContent=title();
+  document.getElementById("rank").textContent=rank()+"-RANG";
+  document.getElementById("xpb").style.width=(S.xp/need()*100)+"%";
+  document.getElementById("xpt").textContent="XP "+S.xp+" / "+need();
+  document.getElementById("strk").textContent="Ketma-ket: "+S.streak+" kun";
+  document.getElementById("qs").innerHTML=S.qs.map(function(q){
+    var st=Math.max(1,Math.round(q.max/10)),d=q.cur>=q.max;
+    return'<div class="q'+(d?" done":"")+'"><div class="qh"><span>'+(d?"✔ ":"")+esc(q.n)+' <small style="color:var(--dim)">'+NM[q.s]+'</small></span><span>['+q.cur+"/"+q.max+']</span></div>'+
+    '<div class="bar"><i style="width:'+(q.cur/q.max*100)+'%"></i></div>'+
+    '<div class="btns"><button onclick="bump('+q.id+","+st+')">+'+st+'</button><button onclick="bump('+q.id+","+q.max+')">Bajarildi</button><button class="x" onclick="del('+q.id+')">✕</button></div></div>';
+  }).join("")||'<div class="sub">Kvestlar yo‘q.</div>';
+  document.getElementById("pts").textContent=S.pts;
+  document.getElementById("stl").innerHTML=Object.keys(NM).map(function(k){return'<div class="row"><span>'+NM[k]+'</span><span><b>'+S.stats[k]+'</b>'+(S.pts>0?'<button onclick="spend(\''+k+'\')">+1</button>':'')+'</span></div>'}).join("");
+  var h="";for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");var v=S.hist[k],p=v&&v[1]?Math.round(v[0]/v[1]*100):0;h+='<div><span style="--p:'+p+'%"></span>'+d.getDate()+'</div>'}
+  document.getElementById("hist").innerHTML=h;
+  document.getElementById("snd").textContent=S.snd?"Yoniq":"O‘chiq";
+  document.getElementById("sh").innerHTML=SH.map(function(s){var on=S.lvl>=s[1];return'<div class="row'+(on?"":" lock")+'"><span><b style="margin:0 8px 0 0;color:var(--vio)">'+(on?"◆":"◇")+'</b>'+s[0]+' <small style="color:var(--dim)">— '+s[2]+'</small></span><span class="small">'+(on?"Uyg‘ongan":s[1]+"-daraja")+'</span></div>'}).join("");
+}
+(function(){var o="";Object.keys(NM).forEach(function(k){o+='<option value="'+k+'">'+NM[k]+'</option>'});document.getElementById("ns").innerHTML=o;
+document.getElementById("chips").innerHTML=CH.map(function(c,i){return'<button onclick="addRaw(CH['+i+'][0],CH['+i+'][1],CH['+i+'][2])">+ '+c[0]+'</button>'}).join("")})();
+function tick(){
+  var n=new Date(),e=new Date(n);e.setHours(24,0,0,0);
+  var s=Math.floor((e-n)/1000),p=function(x){return String(x).padStart(2,"0")};
+  document.getElementById("tm").textContent=p(Math.floor(s/3600))+":"+p(Math.floor(s%3600/60))+":"+p(s%60);
+  if(S.date!==today()){rollover();render()}
+}
+rollover();mark();render();tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
